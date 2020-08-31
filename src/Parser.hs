@@ -29,8 +29,9 @@ report = do
   cor     <- correctionCode
   wind    <- option Nothing (fmap Just windInfo)
   vis     <- visibilityInfo
-  weather <- option Nothing (fmap Just weatherInfo)
+  weather <- option Nothing (fmap Just $ many1 weatherInfo)
   clouds  <- cloudInfo
+  dewtemp <- dewtempInfo
   return (Report
           station
           time
@@ -39,7 +40,8 @@ report = do
           wind
           vis
           weather
-          clouds)
+          clouds
+          dewtemp)
 
 stationCode :: ReadP StationCode
 stationCode = do
@@ -219,3 +221,21 @@ cloudGroupParser = do
               coverage
               base
               convec)
+
+dewtempInfo :: ReadP DewTempInfo
+dewtempInfo = do
+  tempSign <- option Nothing (fmap Just $ char 'M')
+  temp     <- numbers 2
+  string "/"
+  dewSign  <- option Nothing (fmap Just $ char 'M')
+  dew      <- numbers 2
+  string " "
+  case tempSign of
+    Nothing -> do
+      case dewSign of
+        Nothing -> return (DewTempInfo temp dew)
+        Just _  -> return (DewTempInfo temp (negate dew))
+    Just _  -> do
+      case dewSign of
+        Nothing -> return (DewTempInfo (negate temp) dew)
+        Just _  -> return (DewTempInfo (negate temp) (negate dew))

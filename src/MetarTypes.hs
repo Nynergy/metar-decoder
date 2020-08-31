@@ -9,8 +9,9 @@ data Report = Report
   , correction :: Bool
   , wind :: Maybe WindInfo
   , vis :: VisibilityInfo
-  , weather :: Maybe WeatherInfo
+  , weather :: Maybe [WeatherInfo]
   , clouds :: CloudInfo
+  , dewtemp :: DewTempInfo
   } deriving (Show)
 
 type StationCode = String
@@ -66,4 +67,9 @@ data CloudGroup = CloudGroup
   { coverage :: String
   , base :: Int
   , convective :: Maybe String
+  } deriving (Show)
+
+data DewTempInfo = DewTempInfo
+  { temp :: Int
+  , dew :: Int
   } deriving (Show)
