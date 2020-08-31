@@ -12,6 +12,7 @@ data Report = Report
   , weather :: Maybe [WeatherInfo]
   , clouds :: CloudInfo
   , dewtemp :: DewTempInfo
+  , altimeter :: Int
   } deriving (Show)
 
 type StationCode = String

@@ -23,15 +23,16 @@ digit = satisfy isDigit
 
 report :: ReadP Report
 report = do
-  station <- stationCode
-  time    <- timeCode
-  auto    <- automatedCode
-  cor     <- correctionCode
-  wind    <- option Nothing (fmap Just windInfo)
-  vis     <- visibilityInfo
-  weather <- option Nothing (fmap Just $ many1 weatherInfo)
-  clouds  <- cloudInfo
-  dewtemp <- dewtempInfo
+  station   <- stationCode
+  time      <- timeCode
+  auto      <- automatedCode
+  cor       <- correctionCode
+  wind      <- option Nothing (fmap Just windInfo)
+  vis       <- visibilityInfo
+  weather   <- option Nothing (fmap Just $ many1 weatherInfo)
+  clouds    <- cloudInfo
+  dewtemp   <- dewtempInfo
+  altimeter <- altimeterInfo
   return (Report
           station
           time
@@ -41,7 +42,8 @@ report = do
           vis
           weather
           clouds
-          dewtemp)
+          dewtemp
+          altimeter)
 
 stationCode :: ReadP StationCode
 stationCode = do
@@ -239,3 +241,10 @@ dewtempInfo = do
       case dewSign of
         Nothing -> return (DewTempInfo (negate temp) dew)
         Just _  -> return (DewTempInfo (negate temp) (negate dew))
+
+altimeterInfo :: ReadP Int
+altimeterInfo = do
+  string "A"
+  alt <- numbers 4
+  string " "
+  return alt
