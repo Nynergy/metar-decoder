@@ -136,14 +136,25 @@ runwayParser :: ReadP RunwayVis
 runwayParser = do
   string "R"
   runwayNum   <- numbers 1 <|> numbers 2
-  orientation <- char 'L' <|> char 'C' <|> char 'R'
+  orientation <- option Nothing (fmap Just $ char 'L' <|> char 'C' <|> char 'R')
   string "/"
-  distance    <- numbers 4
+  distance    <- (fmap Left variableRunwayVis) <|> (fmap Right $ numbers 4)
   string "FT "
   return (RunwayVis
           runwayNum
           orientation
           distance)
+
+variableRunwayVis :: ReadP VariableVis
+variableRunwayVis = do
+  min    <- numbers 4
+  string "V"
+  prefix <- option Nothing (fmap Just $ char 'P' <|> char 'M')
+  max    <- numbers 4
+  return (VariableVis
+          min
+          prefix
+          max)
 
 weatherInfo :: ReadP WeatherInfo
 weatherInfo = do

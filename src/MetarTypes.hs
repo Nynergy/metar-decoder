@@ -41,8 +41,14 @@ data VisibilityInfo = VisibilityInfo
 
 data RunwayVis = RunwayVis
   { runway :: Int
-  , orient :: Char
-  , dist :: Int
+  , orient :: Maybe Char
+  , dist :: Either VariableVis Int
+  } deriving (Show)
+
+data VariableVis = VariableVis
+  { min :: Int
+  , prefix :: Maybe Char
+  , max :: Int
   } deriving (Show)
 
 data WeatherInfo = WeatherInfo
